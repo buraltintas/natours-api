@@ -2,10 +2,12 @@
 import '@babel/polyfill';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './stripe';
 
 const loginForm = document.querySelector('.form');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
+const bookBtn = document.getElementById('book-tour');
 
 if (loginForm) {
   loginForm.addEventListener('submit', (e) => {
@@ -27,5 +29,15 @@ if (userDataForm) {
     form.append('photo', document.getElementById('photo').files[0]);
 
     updateSettings(form, 'data');
+  });
+}
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', (e) => {
+    e.target.textContent = 'Processing...';
+
+    const { tourId } = e.target.dataset;
+
+    bookTour(tourId);
   });
 }
