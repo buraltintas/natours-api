@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
+const factory = require('./handlerFactory');
 const Tour = require('../models/tourModel');
+const Booking = require('../models/bookingModel');
 // const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -33,3 +34,20 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     session,
   });
 });
+
+exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+  // this is only temporary, because its unsecure, everyone can make bookings without paying
+  const { tour, user, price } = req.query;
+
+  if (!tour && !user && !price) return next();
+
+  await Booking.create({ tour, user, price });
+
+  res.redirect(req.originalUrl.split('?')[0]);
+});
+
+exports.createBooking = factory.createOne(Booking);
+exports.getBooking = factory.getOne(Booking);
+exports.getallBookings = factory.getAll(Booking);
+exports.updateBooking = factory.updateOne(Booking);
+exports.deleteBooking = factory.deleteOne(Booking);
